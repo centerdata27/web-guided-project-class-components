@@ -39,17 +39,65 @@ const groceries = [
 ];
 
 class App extends React.Component {
-  // Class methods to update state
+  constructor() {
+    super();
+    this.state = {
+      groceries // same as === groceries: groceries
+    };
+  }
+
+  addItem = (e, item) => {
+    e.preventDefault();
+    const newItem = {
+      name: item,
+      id: Date.now(),
+      purchased: false
+    };
+    this.setState({
+      groceries: [...this.state.groceries, newItem]
+    });
+  };
+
+  toggleItem = itemId => {
+    console.log(itemId);
+    // map over array
+    // when we find the item we clicked, toggle the purchased field
+    // otherwise return the item untouched
+    this.setState({
+      groceries: this.state.groceries.map(item => {
+        if (itemId === item.id) {
+          return {
+            ...item,
+            purchased: !item.purchased
+          };
+        }
+        return item;
+      })
+    });
+  };
+
+  clearPurchased = e => {
+    e.preventDefault();
+    // if item is purchased (item.purchased is true) then filter out
+    this.setState({
+      groceries: this.state.groceries.filter(item => !item.purchased)
+    });
+  };
+
   render() {
+    console.log('rendering...');
     return (
       <div className="App">
         <div className="header">
-           <h1>Shopping List</h1>
-           <ListForm />
-         </div>
-        <GroceryList groceries={groceries} />
-        <button className="clear-btn">Clear Purchased</button>
-       </div>
+          <h1>Shopping List</h1>
+          <ListForm addItem={this.addItem} />
+        </div>
+        <GroceryList
+          groceries={this.state.groceries}
+          toggleItem={this.toggleItem}
+          clearPurchased={this.clearPurchased}
+        />
+      </div>
     );
   }
 }
